@@ -1,5 +1,5 @@
 {
-    "name": "daursu/xero",
+    "name": "myquote-dev/xero",
     "description": "An elegant Laravel 4 wrapper for the official Xero API.",
     "keywords": ["laravel","illuminate","xero","payroll"],
     "license": "MIT",
@@ -17,7 +17,7 @@
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": "~4.1",
-        "XeroAPI/XeroOAuth-PHP": "@stable"
+        "xero/xerooauth-php": "@stable"
     },
     "require-dev": {
         "mockery/mockery": "~0.9"
