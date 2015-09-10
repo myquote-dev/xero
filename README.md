@@ -40,7 +40,7 @@ Register the service provider within the ```providers``` array found in ```app/c
 
 ### Publish the configuration file
 ```
-php artisan config:publish daursu/xero
+php artisan config:publish myquote-dev/xero
 ```
 This should create a new file in ```app/config/packages/daursu/xero/config.php```. Update this file with your own settings and API key.
 There is also a folder called ```certs```, where I recommend you to put your certificates.
