@@ -2,12 +2,6 @@
 
 use Illuminate\Support\ServiceProvider;
 
-/**
-* Define for file includes. The certs directory is best stored out of web root so moving the directory
-* and updating the reference to BASE_PATH is the best way to ensure things keep working
-*/
-define('XERO_BASE_PATH', dirname(__FILE__));
-
 class XeroServiceProvider extends ServiceProvider {
 
 	/**
@@ -24,7 +18,7 @@ class XeroServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('daursu/xero');
+		$this->package('myquote-dev/xero');
 	}
 
 	/**
@@ -34,8 +28,6 @@ class XeroServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		require_once XERO_BASE_PATH . '/lib/OAuthSimple.php';
-		require_once XERO_BASE_PATH . '/lib/XeroOAuth.php';
 	}
 
 	/**
