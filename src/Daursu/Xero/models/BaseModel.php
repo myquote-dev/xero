@@ -316,12 +316,15 @@ class BaseModel implements AccountsBaseModelInterface {
 	 */
 	public static function get($params = array())
 	{
-		$object = new static;
-		$data   = $object->request('GET', $object->getUrl(), $params);
-		$data   = $object->stripResponseData($data);
-
 		// Initialise a collection
 		$collection = self::newCollection();
+
+		$object = new static;
+		$data = $object->request('GET', $object->getUrl(), $params);
+		if (!$object->hasResponseData($data)) return $collection;
+
+		// We have some valid data in this response. Parse it into a collection
+		$data = $object->stripResponseData($data);
 
 		if (isset($data[0]) && is_array($data[0])) {
 			// This should be a collection
@@ -543,6 +546,29 @@ class BaseModel implements AccountsBaseModelInterface {
 			$data = $data[self::getSingularEntityName()];
 
 		return $data;
+	}
+
+	/**
+	 * This function checks for existence of response data to indicate a successful query
+	 *
+	 * @param  array $data
+	 * @return boolean
+	 */
+	public function hasResponseData(array $data)
+	{
+		$hasData = false;
+
+		if (isset($data[self::getEntityName()]) && is_array($data[self::getEntityName()])) {
+			$data = $data[self::getEntityName()];
+			$hasData = true;
+		}
+
+		if (isset($data[self::getSingularEntityName()]) && is_array($data[self::getSingularEntityName()])) {
+			$data = $data[self::getSingularEntityName()];
+			$hasData = true;
+		}
+
+		return ($hasData ? !empty($data) : false);
 	}
 
 	/**
