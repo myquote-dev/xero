@@ -327,6 +327,11 @@ class BaseModel implements AccountsBaseModelInterface {
 			// This should be a collection
 			$collection->setItems($data);
 		}
+		// Handle single element in a collection as per organisation response
+		else if (is_array($data))
+		{
+			$collection->push($data);
+		}
 
 		return $collection;
 	}
