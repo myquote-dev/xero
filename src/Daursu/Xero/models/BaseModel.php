@@ -245,6 +245,45 @@ class BaseModel implements AccountsBaseModelInterface {
 	}
 
 	/**
+	 * Add an object as a relationship
+	 *
+	 * @param  string  $name
+	 * @param  mixed   $arguments
+	 * @return mixed
+	 */
+	public function add($object)
+	{
+		$class = get_class($object);
+		$relationshipName = str_plural(last(explode('\\',$class)));
+		$relationship = $this->getRelationship($relationshipName);
+		if (is_null($relationship))
+		{
+			$this->addRelationship($class::newCollection());
+			$relationship = $this->getRelationship($relationshipName);
+		}
+
+		if ($relationship instanceof Collection)
+		{
+			$relationship->push($object);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Check an attribute on the model.
+	 *
+	 * @param  string  $key
+	 * @return mixed
+	 */
+	public function __isset($key)
+	{
+		if (isset($this->attributes[$key])) return true;
+		if (isset($this->relationships[$key])) return true;
+		return false;
+	}
+
+	/**
 	 * Add a new relationship
 	 *
 	 * @param mixed $value
@@ -252,6 +291,20 @@ class BaseModel implements AccountsBaseModelInterface {
 	public function addRelationship($value)
 	{
 		return array_push($this->relationships, $value);
+	}
+
+	/**
+	 * Retrieves the named relationship (or NULL if it doesn't exist)
+	 *
+	 * @return mixed
+	 */
+	public function getRelationship($name)
+	{
+		foreach ($this->relationships as $key => $value)
+		{
+			if ($value->getSingularEntityName() == str_singular($name)) return $value;
+		}
+		return null;
 	}
 
 	/**
@@ -303,6 +356,7 @@ class BaseModel implements AccountsBaseModelInterface {
 	public function request($method, $url, $params = array(), $xml = "", $format = "")
 	{
 		if ( !$format) $format = $this->format;
+		if ($params instanceof Filter) $params = $parms->toArray();
 
 		$response = $this->api->request($method, $url, $params, $xml, $format);
 		return $this->parseResponse($response);
@@ -350,7 +404,7 @@ class BaseModel implements AccountsBaseModelInterface {
 		$object = new static;
 		$response = $object->request('GET', sprintf('%s/%s', $object->getUrl(), $id));
 
-		return $response ? $object : false;
+		return $response ? $object : null;
 	}
 
 	/**
