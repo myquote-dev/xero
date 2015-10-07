@@ -2,6 +2,8 @@
 
 class Invoice extends BaseModel {
 
+	use \Daursu\Xero\LineContainerTraits;
+
 	/**
 	 * The name of the primary column.
 	 *

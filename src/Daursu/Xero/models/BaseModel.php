@@ -168,10 +168,7 @@ class BaseModel implements AccountsBaseModelInterface {
 		if (isset($this->attributes[$key]))
 			return $this->attributes[$key];
 
-		if (isset($this->relationships[$key]))
-			return $this->relationships[$key];
-
-		return null;
+		return $this->getRelationship($key);
 	}
 
 	/**
@@ -245,13 +242,26 @@ class BaseModel implements AccountsBaseModelInterface {
 	}
 
 	/**
+	 * Check an attribute on the model.
+	 *
+	 * @param  string  $key
+	 * @return mixed
+	 */
+	public function __isset($key)
+	{
+		if (isset($this->attributes[$key])) return true;
+		if (!is_null($this->getRelationship($key))) return true;
+		return false;
+	}
+
+	/**
 	 * Add an object as a relationship
 	 *
 	 * @param  string  $name
 	 * @param  mixed   $arguments
 	 * @return mixed
 	 */
-	public function add($object)
+	public function push($object)
 	{
 		$class = get_class($object);
 		$relationshipName = str_plural(last(explode('\\',$class)));
@@ -268,19 +278,6 @@ class BaseModel implements AccountsBaseModelInterface {
 		}
 
 		return $this;
-	}
-
-	/**
-	 * Check an attribute on the model.
-	 *
-	 * @param  string  $key
-	 * @return mixed
-	 */
-	public function __isset($key)
-	{
-		if (isset($this->attributes[$key])) return true;
-		if (isset($this->relationships[$key])) return true;
-		return false;
 	}
 
 	/**
@@ -355,8 +352,8 @@ class BaseModel implements AccountsBaseModelInterface {
 	 */
 	public function request($method, $url, $params = array(), $xml = "", $format = "")
 	{
-		if ( !$format) $format = $this->format;
-		if ($params instanceof Filter) $params = $parms->toArray();
+		if (!$format) $format = $this->format;
+		if ($params instanceof Filter) $params = $params->toArray();
 
 		$response = $this->api->request($method, $url, $params, $xml, $format);
 		return $this->parseResponse($response);
