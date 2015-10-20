@@ -653,7 +653,9 @@ class BaseModel implements AccountsBaseModelInterface {
 		}
 		else
 		{
-			throw new XeroGeneralException('Error from Xero: ' . $response['response']);
+			$exception = new XeroGeneralException('Error from Xero: ' . $response['response']);
+			$exception->code = $response['code'];
+			throw $exception;
 		}
 	}
 }
