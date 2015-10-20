@@ -2,6 +2,8 @@
 
 class CreditNote extends BaseModel {
 
+	use \Daursu\Xero\LineItemTraits, \Daursu\Xero\LineAmountTraits;
+
 	/**
 	 * The name of the primary column.
 	 *

@@ -2,7 +2,7 @@
 
 class Invoice extends BaseModel {
 
-	use \Daursu\Xero\LineContainerTraits;
+	use \Daursu\Xero\LineItemTraits, \Daursu\Xero\LineAmountTraits;
 
 	/**
 	 * The name of the primary column.
@@ -21,11 +21,4 @@ class Invoice extends BaseModel {
 		$id = $id ? : $this->attributes[$this->primary_column];
 		return $this->request('GET', sprintf('%s/%s', $this->getUrl(), $id), array(), "", "pdf");
 	}
-
-	/**
-	 * Some quick and easy setters
-	 *
-	 */
-	public function taxInclusive()  { $this->LineAmountTypes = 'Inclusive'; }
-	public function taxExclusive() { $this->LineAmountTypes = 'Exclusive'; }
 }

@@ -1,6 +1,6 @@
 <?php namespace Daursu\Xero;
 
-trait LineContainerTraits
+trait LineItemTraits
 {
 	/*
 	 * Calculate the total by adding up all the line items
