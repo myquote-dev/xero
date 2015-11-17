@@ -1,20 +1,11 @@
 {
     "name": "myquote-dev/xero",
-    "description": "An elegant Laravel 4 wrapper for the official Xero API.",
-    "keywords": ["laravel","illuminate","xero","payroll"],
+    "description": "A fork of Dan Ursu's (daursu/xero) elegant Laravel 4 wrapper for the official Xero API.",
+    "keywords": ["laravel","illuminate","xero"],
     "license": "MIT",
-    "homepage": "http://www.softwareassistance.net",
-    "support": {
-        "email": "support@computerassistance.uk.com",
-        "forum": "http://www.computerassistance.uk.com"
-    },
-    "authors": [
-        {
-            "name": "Dan Ursu",
-            "email": "dan@computerassistance.uk.com"
-        }
-    ],
     "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "~4.1",
         "xero/xerooauth-php": "dev-master"
     },
     "require-dev": {
