@@ -2,7 +2,7 @@
 
 class BankTransaction extends BaseModel {
 
-	use \Daursu\Xero\LineContainerTraits;
+	use \Daursu\Xero\LineItemTraits, \Daursu\Xero\LineAmountTraits;
 
 	/**
 	 * The name of the primary column.
