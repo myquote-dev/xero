@@ -575,7 +575,8 @@ class BaseModel implements AccountsBaseModelInterface {
 					self::array_to_xml($value, $subnode);
 				}
 			} else {
-				$xml->addChild("$key","$value");
+				$childName = "$key";
+				$xml->$childName = "$value";
 			}
 		}
 	}
