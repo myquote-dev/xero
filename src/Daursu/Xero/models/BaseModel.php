@@ -315,6 +315,16 @@ class BaseModel implements AccountsBaseModelInterface {
 	}
 
 	/**
+	 * Retrieves the api url for this particular instance of the entity
+	 *
+	 * @return string
+	 */
+	public function getInstanceUrl()
+	{
+		return $this->getUrl().'/'.$this->getId();
+	}
+
+	/**
 	 * Return the entity name
 	 *
 	 * @return string
@@ -471,6 +481,19 @@ class BaseModel implements AccountsBaseModelInterface {
 		$this->setAttribute($this->status_field, 'DELETED');
 
 		$response = $this->api->request('POST', $this->getUrl(), array(), $this->toXML(), $this->format);
+		return $this->parseResponse($response) ? true : false;
+	}
+
+	/**
+	 * Make a PUT request to attach the provided model to this one
+	 *
+	 * @param  array $params
+	 * @return boolean
+	 */
+	public function associate(BaseModel $model, $params = array())
+	{
+		$url = $this->getInstanceUrl() . '/' . $model->getEntityName();
+		$response = $this->api->request('PUT', $url, $params, $model->toXML(), $this->format);
 		return $this->parseResponse($response) ? true : false;
 	}
 
