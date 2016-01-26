@@ -41,17 +41,25 @@ class Filter
 
 	// Eloquent Where style parameter
 	//
-	// e.g. where('Name', 'John') generates Name=="John"
+	// e.g. where('Name', 'John') generates Name="John"
 	//
 	public function where($field, $operator, $value = null, $glue = 'AND')
 	{
-		// If only two arguments, assume == operator
-		if (func_num_args() == 2) list($value, $operator) = [$operator, '=='];
+		// If only two arguments, assume = operator
+		if (func_num_args() == 2) list($value, $operator) = [$operator, '='];
 
-		if (is_string($value)) $value = '"'.$value.'"'; // Quote only string types
-		if (is_null($value)) $value = 'null'; // Allow null values for comparison
+		if (self::isGUID($value))
+		{
+			// Special formatting for GUID types
+			$value = 'GUID("'.$value.'")';
+		}
+		else
+		{
+			if (is_string($value)) $value = '"'.$value.'"'; // Quote only string types
+			if (is_null($value)) $value = 'null'; // Allow null values for comparison
+		}
 
-		$this->addWhereClause($field.'=='.$value, $glue);
+		$this->addWhereClause($field.$operator.$value, $glue);
 
 		return $this;
 	}
@@ -69,7 +77,7 @@ class Filter
 	public function orWhere($field, $operator, $value = null)
 	{
 		// If only two arguments, assume == operator
-		if (func_num_args() == 2) list($value, $operator) = [$operator, '=='];
+		if (func_num_args() == 2) list($value, $operator) = [$operator, '='];
 
 		return $this->where($field,$operator,$value,'OR');
 	}
@@ -90,5 +98,10 @@ class Filter
 		$this->params['where'] .= $clause;
 
 		return $this;
+	}
+
+	static protected function isGUID($string)
+	{
+		return preg_match('/^\{?[a-f\d]{8}-(?:[a-f\d]{4}-){3}[a-f\d]{12}?$/', $string) != 0;
 	}
 }
