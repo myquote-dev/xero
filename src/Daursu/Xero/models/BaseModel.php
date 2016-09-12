@@ -629,7 +629,7 @@ class BaseModel implements AccountsBaseModelInterface {
 	 * @param  array $data
 	 * @return boolean
 	 */
-	public function hasResponseData(array $data)
+	public function hasResponseData($data)
 	{
 		$hasData = false;
 
