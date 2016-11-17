@@ -148,6 +148,11 @@ class BaseModel implements AccountsBaseModelInterface {
 					$this->addRelationship($collection);
 				}
 			}
+			else
+			{
+				// No class exists for the relationship. Add it as an array attribute instead...
+				$this->attributes[$key] = $value;
+			}
 		}
 		elseif ($value instanceof Collection) {
 			$this->addRelationship($value);
@@ -311,7 +316,7 @@ class BaseModel implements AccountsBaseModelInterface {
 	 */
 	public function getUrl()
 	{
-		return $this->api->url(self::getEntityName(), $this->apiPath);
+		return $this->api->url(static::getEntityName(), $this->apiPath);
 	}
 
 	/**
@@ -347,7 +352,7 @@ class BaseModel implements AccountsBaseModelInterface {
 		if ( isset(self::$entity_singular) && ! empty(self::$entity_singular))
 			return self::$entity_singular;
 
-		return str_singular(self::getEntityName());
+		return str_singular(static::getEntityName());
 	}
 
 	/**
@@ -364,9 +369,24 @@ class BaseModel implements AccountsBaseModelInterface {
 	{
 		if (!$format) $format = $this->format;
 		if ($params instanceof Filter) $params = $params->toArray();
-
 		$response = $this->api->request($method, $url, $params, $xml, $format);
 		return $this->parseResponse($response);
+	}
+
+	/**
+	 * Get the model data as an array filtered by the class name or return null if no data present
+	 *
+	 * @param  array  $params
+	 * @return mixed
+	 */
+	public static function getModelData($params = array())
+	{
+		$object = new static;
+		$data = $object->request('GET', $object->getUrl(), $params);
+		if (!$object->hasResponseData($data)) return null;
+
+		// We have some valid data in this response.
+		return $object->stripResponseData($data);
 	}
 
 	/**
@@ -380,12 +400,9 @@ class BaseModel implements AccountsBaseModelInterface {
 		// Initialise a collection
 		$collection = self::newCollection();
 
-		$object = new static;
-		$data = $object->request('GET', $object->getUrl(), $params);
-		if (!$object->hasResponseData($data)) return $collection;
-
-		// We have some valid data in this response. Parse it into a collection
-		$data = $object->stripResponseData($data);
+		// Make the request and get data as an array
+		$data = static::getModelData($params);
+		if (is_null($data)) return $collection;
 
 		if (isset($data[0]) && is_array($data[0])) {
 			// This should be a collection
@@ -504,7 +521,7 @@ class BaseModel implements AccountsBaseModelInterface {
 	 */
 	public static function newCollection(array $items = array())
 	{
-		return new Collection(self::getEntityName(), self::getSingularEntityName(), $items);
+		return new Collection(static::getEntityName(), static::getSingularEntityName(), $items);
 	}
 
 	/**
@@ -549,14 +566,14 @@ class BaseModel implements AccountsBaseModelInterface {
 	 */
 	public function toXML($singular = false)
 	{
-		$root = ($singular) ? self::getSingularEntityName() : self::getEntityName();
+		$root = ($singular) ? static::getSingularEntityName() : static::getEntityName();
 
 		$output = new SimpleXMLElement(
 			sprintf('<%s></%s>', $root, $root)
 		);
 
 		if ( ! $singular) {
-			$node = $output->addChild(self::getSingularEntityName());
+			$node = $output->addChild(static::getSingularEntityName());
 			self::array_to_xml($this->toArray(), $node);
 		}
 		else {
@@ -614,11 +631,11 @@ class BaseModel implements AccountsBaseModelInterface {
 	 */
 	public function stripResponseData(array $data)
 	{
-		if (isset($data[self::getEntityName()]) && is_array($data[self::getEntityName()]))
-			$data = $data[self::getEntityName()];
+		if (isset($data[static::getEntityName()]) && is_array($data[static::getEntityName()]))
+			$data = $data[static::getEntityName()];
 
-		if (isset($data[self::getSingularEntityName()]) && is_array($data[self::getSingularEntityName()]))
-			$data = $data[self::getSingularEntityName()];
+		if (isset($data[static::getSingularEntityName()]) && is_array($data[static::getSingularEntityName()]))
+			$data = $data[static::getSingularEntityName()];
 
 		return $data;
 	}
@@ -633,13 +650,13 @@ class BaseModel implements AccountsBaseModelInterface {
 	{
 		$hasData = false;
 
-		if (isset($data[self::getEntityName()]) && is_array($data[self::getEntityName()])) {
-			$data = $data[self::getEntityName()];
+		if (isset($data[static::getEntityName()]) && is_array($data[static::getEntityName()])) {
+			$data = $data[static::getEntityName()];
 			$hasData = true;
 		}
 
-		if (isset($data[self::getSingularEntityName()]) && is_array($data[self::getSingularEntityName()])) {
-			$data = $data[self::getSingularEntityName()];
+		if (isset($data[static::getSingularEntityName()]) && is_array($data[static::getSingularEntityName()])) {
+			$data = $data[static::getSingularEntityName()];
 			$hasData = true;
 		}
 
