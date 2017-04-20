@@ -10,7 +10,7 @@ class JournalLine extends BaseModel {
 		return new JournalLine(array_merge($fields,
 			[
 				'Description' => $description,
-				'LineAmount' => number_format(round($amount,2),2),
+				'LineAmount' => number_format(round($amount,2),2, '.', ''),
 				'AccountCode' => $account_code
 			]));
 	}
