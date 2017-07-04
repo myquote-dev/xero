@@ -87,7 +87,7 @@ class BaseModel implements AccountsBaseModelInterface {
 	 */
 	public function __construct($attributes = array())
 	{
-		$this->api = new XeroOAuth(Config::get('xero::config'));
+		$this->api = new XeroOAuth(Config::get('xero'));
 
 		// Run an initial diagnostic on the configuration
 		$errors = $this->api->diagnostics();

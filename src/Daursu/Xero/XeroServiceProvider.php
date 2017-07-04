@@ -18,7 +18,7 @@ class XeroServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('myquote-dev/xero');
+		$this->mergeConfigFrom(__DIR__.'/../../config/config.php', 'xero');
 	}
 
 	/**
