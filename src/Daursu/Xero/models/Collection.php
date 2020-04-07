@@ -63,19 +63,26 @@ class Collection extends \Illuminate\Support\Collection {
 	/**
 	 * Add a new item to the collection
 	 *
-	 * @param  mixed $item
-	 * @return void
+	 * @param  mixed  $items [optional]
+     * @return $this
 	 */
-	public function push($item)
+	public function push(...$items)
 	{
 		$full_class_name = $this->getFullClassName();
 
-		if (is_array($item)) {
-			array_push($this->items, new $full_class_name($item));
+		foreach ($items as $item)
+		{
+			if (is_array($item))
+			{
+				array_push($this->items, new $full_class_name($item));
+			}
+			elseif ($item instanceof $full_class_name)
+			{
+				array_push($this->items, $item);
+			}
 		}
-		elseif ($item instanceof $full_class_name) {
-			array_push($this->items, $item);
-		}
+
+		return $this;
 	}
 
 	/**
